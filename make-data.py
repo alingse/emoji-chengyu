@@ -4,7 +4,6 @@ import io
 import json
 from collections import defaultdict
 
-
 marked_emoji_filepath = './emoji_chengyu/data/emoji.cn.json'
 chengyu_filepath = './emoji_chengyu/data/idiom.json'
 
@@ -18,18 +17,19 @@ def make_idiom():
         raw_content = f.read()
 
     idioms = json.loads(raw_content)
-    idiom_map = {}
-    for x in idioms:
-        idiom_map[x['word']] = x['pinyin']
 
     with io.open(chengyu_filepath, 'w') as f:
-        f.write(json.dumps(idiom_map, ensure_ascii=False))
+        for x in idioms:
+            idiom = {}
+            idiom['word'] = x['word']
+            idiom['pinyin'] = x['pinyin']
+            f.write(json.dumps(idiom, ensure_ascii=False))
+            f.write('\n')
 
 
 def load_word_map():
     with io.open(temp_word_filepath, 'r') as f:
         words = json.load(f)
-
 
     word_map = defaultdict(list)
     for x in words:
@@ -37,10 +37,24 @@ def load_word_map():
     return word_map
 
 
-def mark_one_emoji(emoji, word_map):
-    print('this emoji is', emoji['char'])
-    print('category:', emoji['category'])
-    print('keywords:', emoji['keywords'])
+def load_emoji_map():
+    with io.open(temp_emoji_filepath, 'r') as f:
+        emojis = json.load(f)
+
+    emoji_map = {}
+    for key, value in emojis.items():
+        emoji = {}
+        emoji['name'] = key
+        emoji['keywords'] = value['keywords']
+        emoji['category'] = value['category']
+        emoji_map[value['char']] = emoji
+    return emoji_map
+
+
+def mark_one_emoji(emoji, emoji_map, word_map):
+    print(f'this emoji is {emoji}')
+    print(f'category: {emoji_map[emoji]["category"]}')
+    print(f'keywords: {emoji_map[emoji]["keywords"]}')
 
     flag = None
     words = []
@@ -52,12 +66,12 @@ def mark_one_emoji(emoji, word_map):
             flag = 'next'
             break
         if word == 'exit':
-            print('will save and exit.')
+            print('will exit.')
             flag = 'exit'
             break
 
         if word not in word_map:
-            print('word have no data')
+            print(f'word {word} have no data')
             continue
 
         pinyins = word_map[word]
@@ -67,35 +81,49 @@ def mark_one_emoji(emoji, word_map):
             indexes = map(int, indexes.split(' '))
             pinyins = [pinyins[i] for i in indexes]
 
-        words.append((word, pinyins))
+        one_word = {}
+        one_word['word'] = word
+        one_word['pinyins'] = pinyins
+        words.append(one_word)
     return flag, words
 
 
 def mark_emoji():
-    with io.open(temp_emoji_filepath, 'r') as f:
-        emoji_map = json.load(f)
+    marked_emoji_map = {}
+    marks = []
 
-    mark_emoji_map = {}
     if os.path.exists(marked_emoji_filepath):
         with io.open(marked_emoji_filepath, 'r') as f:
-            mark_emoji_map = json.load(f)
+            for line in f:
+                mark = json.loads(line)
+                marks.append(mark)
+                marked_emoji_map[mark['emoji']] = True
 
     word_map = load_word_map()
-    for _, emoji in emoji_map.items():
-        if emoji['char'] in mark_emoji_map:
+    emoji_map = load_emoji_map()
+
+    for emoji in emoji_map:
+        # 只标记新的
+        if emoji in marked_emoji_map:
             continue
 
-        flag, words = mark_one_emoji(emoji, word_map)
-        if words:
-            mark_emoji_map[emoji['char']] = dict(words)
+        flag, words = mark_one_emoji(
+            emoji=emoji,
+            emoji_map=emoji_map,
+            word_map=word_map)
 
         if flag == 'exit':
             break
-        elif flag == 'next':
-            continue
+        mark = {}
+        mark['emoji'] = emoji
+        mark['words'] = words
+        marks.append(mark)
+        marked_emoji_map[emoji] = True
 
     with io.open(marked_emoji_filepath, 'w') as f:
-        f.write(json.dumps(mark_emoji_map, ensure_ascii=False))
+        for mark in marks:
+            f.write(json.dumps(mark, ensure_ascii=False))
+            f.write('\n')
 
 
 def edit_emoji():
@@ -104,19 +132,25 @@ def edit_emoji():
 
 def main():
     if len(sys.argv) == 1:
-        print('python3 make-data.py [idiom|emoji]')
+        print('python3 make-data.py [idiom|emoji|word]')
         print('python3 make-data.py emoji [mark|edit]')
-    if sys.argv[1] == 'idiom':
+        return
+    elif sys.argv[1] == 'idiom':
         make_idiom()
         return
-    if sys.argv[1] == 'word':
+    elif sys.argv[1] == 'word':
         word_map = load_word_map()
-        print(word_map)
-    if sys.argv[1] == 'emoji':
-        if sys.argv[2] == 'mark':
+        print(len(word_map))
+        return
+    elif sys.argv[1] == 'emoji':
+        if len(sys.argv) == 2:
+            emoji_map = load_emoji_map()
+            print(len(emoji_map))
+            return
+        elif sys.argv[2] == 'mark':
             mark_emoji()
             return
-        if sys.argv[2] == 'edit':
+        elif sys.argv[2] == 'edit':
             edit_emoji()
             return
 
