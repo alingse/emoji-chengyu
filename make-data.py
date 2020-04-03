@@ -1,7 +1,7 @@
-import os
-import sys
 import io
 import json
+import os
+import sys
 from collections import defaultdict
 
 marked_emoji_filepath = './emoji_chengyu/data/emoji.cn.json'
@@ -33,7 +33,7 @@ def load_word_map():
 
     word_map = defaultdict(list)
     for x in words:
-        word_map[x['word']].append(x['pinyin'])
+        word_map[x['word']] = x['pinyin']
     return word_map
 
 
@@ -74,16 +74,10 @@ def mark_one_emoji(emoji, emoji_map, word_map):
             print(f'word {word} have no data')
             continue
 
-        pinyins = word_map[word]
-        if len(pinyins) > 1:
-            print('wraning word have multi pinyin', pinyins)
-            indexes = input('entry 1 2 3... to chose:')
-            indexes = map(int, indexes.split(' '))
-            pinyins = [pinyins[i] for i in indexes]
-
+        pinyin = word_map[word]
         one_word = {}
         one_word['word'] = word
-        one_word['pinyins'] = pinyins
+        one_word['pinyin'] = pinyin
         words.append(one_word)
     return flag, words
 
@@ -106,11 +100,14 @@ def mark_emoji():
         # 只标记新的
         if emoji in marked_emoji_map:
             continue
-
-        flag, words = mark_one_emoji(
-            emoji=emoji,
-            emoji_map=emoji_map,
-            word_map=word_map)
+        try:
+            flag, words = mark_one_emoji(
+                emoji=emoji,
+                emoji_map=emoji_map,
+                word_map=word_map)
+        except Exception as e:
+            print(e)
+            break
 
         if flag == 'exit':
             break
