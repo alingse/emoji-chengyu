@@ -5,7 +5,7 @@ import sys
 from collections import defaultdict
 
 marked_emoji_filepath = './emoji_chengyu/data/emoji.cn.json'
-chengyu_filepath = './emoji_chengyu/data/idiom.json'
+chengyu_filepath = './emoji_chengyu/data/chengyu.json'
 
 temp_idiom_filepath = 'temp.idiom.json'
 temp_word_filepath = 'temp.word.json'
