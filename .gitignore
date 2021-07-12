@@ -5,6 +5,7 @@ __pycache__/
 
 # temp data
 temp.*.json
+temp.*.txt
 
 # C extensions
 *.so

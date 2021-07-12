@@ -8,6 +8,7 @@ class datasource(object):
 
     DATA_DIR = 'data'
     CHENGYU_JSON = 'chengyu.json'
+    CHENGYU_COUNT_JSON = 'chengyu.count.json'
     EMOJI_CN_JSON = 'emoji.cn.json'
     TONE_JSON = 'tone.json'
     CN_COMMA = '，'
@@ -15,10 +16,12 @@ class datasource(object):
     def __init__(self):
         this = os.path.dirname(os.path.abspath(__file__))
         self.base = os.path.join(this, self.DATA_DIR)
+        self.load_chengyu_count()
         self.load_chengyu()
         self.load_emoji()
         self.load_tone()
         self.reverse_emoji()
+        self.sort_chengyu()
 
     def load_chengyu(self):
         self.chengyu_list = []
@@ -37,6 +40,21 @@ class datasource(object):
                 chengyu['pinyins'] = pinyins
                 chengyu['words'] = words
                 self.chengyu_list.append(chengyu)
+
+    def load_chengyu_count(self):
+        count_map = {}
+        file = os.path.join(self.base, self.CHENGYU_COUNT_JSON)
+        with io.open(file, 'r') as f:
+            count_map = json.load(f)
+
+        self.chengyu_count_map = defaultdict(int)
+        for word, count in count_map.items():
+            self.chengyu_count_map[word] = count
+
+    def sort_chengyu(self):
+        self.chengyu_list.sort(
+            key=lambda item: self.chengyu_count_map[item['word']],
+            reverse=True)
 
     def load_emoji(self):
         self.emoji_map = {}

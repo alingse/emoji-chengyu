@@ -4,9 +4,23 @@ from random import choice
 from .data import DataSource
 
 
-def gen_one_pair():
+def gen_one_pair(only_used=True, count=20, search_count=1000):
+    # TODO: support more config
+    items = DataSource.chengyu_list
+    if only_used:
+        items = DataSource.chengyu_list[:len(DataSource.chengyu_count_map)]
+
+    if search_count is not None:
+        items = items[:search_count]
+    if not items:
+        return
+
+    chengyu_item = choice(items)
+    return make_one_pair(chengyu_item)
+
+
+def make_one_pair(chengyu_item):
     # 随机选一个成语
-    chengyu_item = choice(DataSource.chengyu_list)
     words = chengyu_item['words']
     pinyins = chengyu_item['pinyins']
     emojis = [None] * len(words)

@@ -6,10 +6,12 @@ from collections import defaultdict
 
 marked_emoji_filepath = './emoji_chengyu/data/emoji.cn.json'
 chengyu_filepath = './emoji_chengyu/data/chengyu.json'
+chengyu_count_filepath = './emoji_chengyu/data/chengyu.count.json'
 
 temp_idiom_filepath = 'temp.idiom.json'
 temp_word_filepath = 'temp.word.json'
 temp_emoji_filepath = 'temp.emoji.json'
+temp_chengyu_use_filepath = 'temp.chengyu.use.txt'
 
 
 def make_idiom():
@@ -127,6 +129,29 @@ def edit_emoji():
     pass
 
 
+def count_chengyu_use():
+    try:
+        with io.open(chengyu_count_filepath, 'r') as f:
+            word_count_map = json.load(f)
+    except Exception:
+        word_count_map = {}
+
+    with io.open(temp_chengyu_use_filepath, 'r') as f:
+        temp_chengyu_use_txt = f.read()
+
+    with io.open(chengyu_filepath, 'r') as f:
+        for line in f:
+            item = json.loads(line)
+            word = item['word']
+            count = temp_chengyu_use_txt.count(word)
+            count += word_count_map.get(word, 0)
+            if count > 0:
+                word_count_map[word] = count
+
+    with io.open(chengyu_count_filepath, 'w') as f:
+        json.dump(word_count_map, f, indent=4, ensure_ascii=False)
+
+
 def main():
     if len(sys.argv) == 1:
         print('python3 make-data.py [idiom|emoji|word]')
@@ -150,7 +175,8 @@ def main():
         elif sys.argv[2] == 'edit':
             edit_emoji()
             return
-
+    elif sys.argv[1] == 'count':
+        count_chengyu_use()
 
 if __name__ == '__main__':
     main()
