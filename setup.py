@@ -10,6 +10,7 @@ setup(
     author_email='alingse@foxmail.com',
     license='MIT',
     packages=['emoji_chengyu'],
+    include_package_data=True,
     classifiers=[
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3.6',
@@ -18,7 +19,7 @@ setup(
     install_requires=[],
     entry_points={
         'console_scripts': [
-            'emoji_chengyu = emoji_chengyu.main:emoji_chengyu',
+            'emoji-chengyu-cli = emoji_chengyu.main:emoji_chengyu',
         ],
     },
 )

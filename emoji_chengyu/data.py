@@ -27,6 +27,15 @@ class datasource(object):
         with io.open(file, 'r') as f:
             for line in f:
                 chengyu = json.loads(line)
+                pinyins = self.split_chengyu_pinyin(chengyu['pinyin'])
+                words = list(chengyu['word'])
+                # pinyins
+                # {"word": "爱之欲其生，恶之欲其死", "pinyin": "ài zhī yù qí shēng，wù zhī"}
+                if len(pinyins) != len(words):
+                    continue
+
+                chengyu['pinyins'] = pinyins
+                chengyu['words'] = words
                 self.chengyu_list.append(chengyu)
 
     def load_emoji(self):
@@ -82,13 +91,18 @@ class datasource(object):
         self.cn_emoji_map = defaultdict(list)
         self.pinyin_emoji_map = defaultdict(list)
 
+        # {"emoji": "😊", "words": [{"word": "福", "pinyin": "fú"}, {"word": "羞", "pinyin": "xiū"}]}
         for emoji, emoji_item in self.emoji_map.items():
             for word_item in emoji_item['words']:
-                self.cn_emoji_map[word_item['word']].append(emoji_item)
-                self.pinyin_emoji_map[word_item['pinyin']].append(emoji_item)
-                pinyin = self.clean_tone(word_item['pinyin'])
-                if pinyin != word_item['pinyin']:
-                    self.pinyin_emoji_map[pinyin].append(emoji_item)
+                word = word_item['word']
+                word_py = word_item['pinyin']
+
+                self.cn_emoji_map[word].append(emoji_item)
+                self.pinyin_emoji_map[word_py].append(emoji_item)
+
+                word_py2 = self.clean_tone(word_py)
+                if word_py2 != word_py:
+                    self.pinyin_emoji_map[word_py2].append(emoji_item)
 
 
 DataSource = datasource()

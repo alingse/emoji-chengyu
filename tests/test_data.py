@@ -16,5 +16,13 @@ class TestDataSource(unittest.TestCase):
 
     def test_split_chengyu_pinyin(self):
         pinyin = "ān bù lí mǎ，jiǎ bù lí shēn"
-        print(DataSource.split_chengyu_pinyin(pinyin))
+        # print(DataSource.split_chengyu_pinyin(pinyin))
         assert len(DataSource.split_chengyu_pinyin(pinyin)) == 9
+
+    def test_all_split(self):
+        for chengyu_item in DataSource.chengyu_list:
+            pys = DataSource.split_chengyu_pinyin(chengyu_item['pinyin'])
+            words = list(chengyu_item['word'])
+
+            # print(pys, words)
+            assert len(pys) == len(words)

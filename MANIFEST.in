@@ -1,0 +1,3 @@
+include emoji_chengyu/data/chengyu.json
+include emoji_chengyu/data/emoji.cn.json
+include emoji_chengyu/data/tone.json
