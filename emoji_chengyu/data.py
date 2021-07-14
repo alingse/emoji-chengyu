@@ -23,8 +23,12 @@ class datasource(object):
         self.reverse_emoji()
         self.sort_chengyu()
 
+        self.total_chengyu_count = len(self.chengyu_list)
+        self.common_chengyu_count = len(self.count_map)
+
     def load_chengyu(self):
         self.chengyu_list = []
+        self.chengyu_map = {}
 
         file = os.path.join(self.base, self.CHENGYU_JSON)
         with io.open(file, 'r') as f:
@@ -40,6 +44,7 @@ class datasource(object):
                 chengyu['pinyins'] = pinyins
                 chengyu['words'] = words
                 self.chengyu_list.append(chengyu)
+                self.chengyu_map[chengyu['word']] = chengyu
 
     def load_chengyu_count(self):
         count_map = {}
