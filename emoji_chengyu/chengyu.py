@@ -4,7 +4,7 @@ from random import choice
 from .data import DataSource
 
 
-def gen_one_pair(only_used=True, count=20, search_count=1000):
+def gen_one_emoji_pair(only_used=True, count=20, search_count=1000):
     # TODO: support more config
     items = DataSource.chengyu_list
     if only_used:
@@ -16,10 +16,10 @@ def gen_one_pair(only_used=True, count=20, search_count=1000):
         return
 
     chengyu_item = choice(items)
-    return make_one_pair(chengyu_item)
+    return make_one_emoji_pair(chengyu_item)
 
 
-def make_one_pair(chengyu_item):
+def make_one_emoji_pair(chengyu_item):
     # 随机选一个成语
     words = chengyu_item['words']
     pinyins = chengyu_item['pinyins']
