@@ -24,7 +24,7 @@ class datasource(object):
         self.sort_chengyu()
 
         self.total_chengyu_count = len(self.chengyu_list)
-        self.common_chengyu_count = len(self.count_map)
+        self.common_chengyu_count = len(self.chengyu_count_map)
 
     def load_chengyu(self):
         self.chengyu_list = []

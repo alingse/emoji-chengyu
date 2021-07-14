@@ -1,10 +1,10 @@
-from emoji_chengyu.chengyu import gen_one_pair
+from emoji_chengyu.chengyu import gen_one_emoji_pair
 
 
 def emoji_chengyu():
     N = 100
 
-    pairs = [gen_one_pair() for i in range(N)]
+    pairs = [gen_one_emoji_pair() for i in range(N)]
     pairs = list(filter(None, pairs))
     pairs.sort(key=lambda pair: pair['emojis'].count(None))
 
