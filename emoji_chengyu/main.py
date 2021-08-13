@@ -1,12 +1,14 @@
-from emoji_chengyu.chengyu import gen_one_emoji_pair
+import itertools
+
+from emoji_chengyu.puzzle import gen_puzzle
 
 
 def emoji_chengyu():
     N = 100
+    pg = gen_puzzle()
+    puzzles = list(itertools.islice(pg, N))
+    puzzles.sort(key=lambda p: sum(p.mask), reverse=True)
 
-    pairs = [gen_one_emoji_pair() for i in range(N)]
-    pairs = list(filter(None, pairs))
-    pairs.sort(key=lambda pair: pair['emojis'].count(None))
-
-    for pair in pairs[:20]:
-        print(pair['word'], pair['emoji'])
+    M = 20
+    for puzzle in puzzles[:M]:
+        print(''.join(puzzle.puzzle), puzzle.chengyu_item.word)

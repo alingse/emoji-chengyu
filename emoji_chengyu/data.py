@@ -1,131 +1,204 @@
 import io
 import json
-import os
+import pathlib
 from collections import defaultdict
+from dataclasses import dataclass
+from typing import List, Tuple
 
 
-class datasource(object):
+TONE_MAP = {
+    "ā": "a",
+    "á": "a",
+    "ǎ": "a",
+    "à": "a",
+    "ē": "e",
+    "é": "e",
+    "ě": "e",
+    "è": "e",
+    "ī": "i",
+    "í": "i",
+    "ǐ": "i",
+    "ì": "i",
+    "ō": "o",
+    "ó": "o",
+    "ǒ": "o",
+    "ò": "o",
+    "ū": "u",
+    "ú": "u",
+    "ǔ": "u",
+    "ù": "u",
+    "ü": "v",
+    "ǖ": "v",
+    "ǘ": "v",
+    "ǚ": "v",
+    "ǜ": "v"
+}
 
-    DATA_DIR = 'data'
-    CHENGYU_JSON = 'chengyu.json'
-    CHENGYU_COUNT_JSON = 'chengyu.count.json'
-    EMOJI_CN_JSON = 'emoji.cn.json'
-    TONE_JSON = 'tone.json'
-    CN_COMMA = '，'
 
-    def __init__(self):
-        this = os.path.dirname(os.path.abspath(__file__))
-        self.base = os.path.join(this, self.DATA_DIR)
-        self.load_chengyu_count()
-        self.load_chengyu()
-        self.load_emoji()
-        self.load_tone()
-        self.reverse_emoji()
-        self.sort_chengyu()
+DATA_DIR = 'data'
+CHENGYU_JSON = 'chengyu.json'
+CHENGYU_COUNT_JSON = 'chengyu.count.json'
+EMOJI_CN_JSON = 'emoji.cn.json'
+CN_COMMA = '，'
 
-        self.total_chengyu_count = len(self.chengyu_list)
-        self.common_chengyu_count = len(self.chengyu_count_map)
 
-    def load_chengyu(self):
-        self.chengyu_list = []
-        self.chengyu_map = {}
+def clean_tone(origin):
+    rs = None
+    for i, c in enumerate(origin):
+        if c in TONE_MAP:
+            if rs is None:
+                rs = list(origin)
 
-        file = os.path.join(self.base, self.CHENGYU_JSON)
-        with io.open(file, 'r') as f:
-            for line in f:
-                chengyu = json.loads(line)
-                pinyins = self.split_chengyu_pinyin(chengyu['pinyin'])
-                words = list(chengyu['word'])
-                # pinyins
-                # {"word": "爱之欲其生，恶之欲其死", "pinyin": "ài zhī yù qí shēng，wù zhī"}
-                if len(pinyins) != len(words):
-                    continue
+            rs[i] = TONE_MAP[c]
+    if rs is None:
+        return origin
+    return ''.join(rs)
 
-                chengyu['pinyins'] = pinyins
-                chengyu['words'] = words
-                self.chengyu_list.append(chengyu)
-                self.chengyu_map[chengyu['word']] = chengyu
 
-    def load_chengyu_count(self):
-        count_map = {}
-        file = os.path.join(self.base, self.CHENGYU_COUNT_JSON)
-        with io.open(file, 'r') as f:
-            count_map = json.load(f)
-
-        self.chengyu_count_map = defaultdict(int)
-        for word, count in count_map.items():
-            self.chengyu_count_map[word] = count
-
-    def sort_chengyu(self):
-        self.chengyu_list.sort(
-            key=lambda item: self.chengyu_count_map[item['word']],
-            reverse=True)
-
-    def load_emoji(self):
-        self.emoji_map = {}
-
-        file = os.path.join(self.base, self.EMOJI_CN_JSON)
-        with io.open(file, 'r') as f:
-            for line in f:
-                emoji_item = json.loads(line)
-                if not emoji_item['words']:
-                    continue
-
-                self.emoji_map[emoji_item['emoji']] = emoji_item
-
-    def load_tone(self):
-        self.tone_map = {}
-
-        file = os.path.join(self.base, self.TONE_JSON)
-        with io.open(file, 'r') as f:
-            self.tone_map = json.load(f)
-
-    def split_chengyu_pinyin(self, origin):
-        rs = []
-        last = ''
-        for c in origin:
-            if c == ' ':
-                rs.append(last)
-                last = ''
-            elif c == self.CN_COMMA:
-                rs.append(last)
-                rs.append(c)
-                last = ''
-            else:
-                last += c
-        if last:
+def split_pinyin(origin):
+    rs = []
+    last = ''
+    for c in origin:
+        if c == ' ' and last:
             rs.append(last)
-        elif origin[-1] == ' ':
-            rs.append('')
-        return rs
-
-    def clean_tone(self, origin):
-        rs = None
-        for i, c in enumerate(origin):
-            if c in self.tone_map:
-                if rs is None:
-                    rs = list(origin)
-                rs[i] = self.tone_map[c]
-        if rs is None:
-            return origin
-        return ''.join(rs)
-
-    def reverse_emoji(self):
-        self.cn_emoji_map = defaultdict(list)
-        self.pinyin_emoji_map = defaultdict(list)
-
-        # {"emoji": "😊", "words": [{"word": "福", "pinyin": "fú"}, {"word": "羞", "pinyin": "xiū"}]}
-        for emoji, emoji_item in self.emoji_map.items():
-            for word_item in emoji_item['words']:
-                word = word_item['word']
-                word_py = word_item['pinyin']
-
-                self.cn_emoji_map[word].append(emoji_item)
-                self.pinyin_emoji_map[word_py].append(emoji_item)
-
-                word_py2 = self.clean_tone(word_py)
-                if word_py2 != word_py:
-                    self.pinyin_emoji_map[word_py2].append(emoji_item)
+            last = ''
+        elif c == CN_COMMA:
+            rs.append(last)
+            rs.append(c)
+            last = ''
+        else:
+            last += c
+    if last:
+        rs.append(last)
+    return tuple(rs)
 
 
-DataSource = datasource()
+@dataclass(frozen=True)
+class ChengyuItem:
+    word: str
+    pinyin: str
+    word_list: Tuple[str]
+    pinyin_list: Tuple[str]
+    used_count: int
+
+    @property
+    def is_common(self):
+        return self.used_count > 0
+
+
+def load_chengyu_data():
+    data_path = pathlib.Path(__file__).parent.joinpath(DATA_DIR)
+
+    with io.open(data_path.joinpath(CHENGYU_COUNT_JSON), 'r') as f:
+        chengyu_count_map = json.load(f)
+
+    def make_chengyu_item(raw_data):
+        word = raw_data['word']
+        pinyin = raw_data['pinyin']
+        word_list = tuple(list(word))
+        pinyin_list = split_pinyin(pinyin)
+        # bad data
+        if len(word_list) != len(pinyin_list):
+            return None
+
+        used_count = chengyu_count_map.get(word, 0)
+        return ChengyuItem(
+            word=word,
+            pinyin=pinyin,
+            word_list=word_list,
+            pinyin_list=pinyin_list,
+            used_count=used_count)
+
+    chengyu_list = []
+    with io.open(data_path.joinpath(CHENGYU_JSON), 'r') as f:
+        for line in f:
+            raw_dict = json.loads(line)
+            item = make_chengyu_item(raw_dict)
+            if item:
+                chengyu_list.append(item)
+
+    return chengyu_list
+
+
+class ChengyuManager(object):
+
+    def __init__(self, chengyu_list: List[ChengyuItem]):
+        self.chengyu_list = chengyu_list
+        self._word_map = {}
+        for item in chengyu_list:
+            self._word_map[item.word] = item
+
+    def get_by_word(self, word):
+        return self._word_map.get(word)
+
+
+# TODO: clean this?
+
+chengyu_list = load_chengyu_data()
+common_chengyu_list = list(filter(lambda item: item.is_common, chengyu_list))
+
+
+DefaultChengyuManager = ChengyuManager(chengyu_list)
+CommonChengyuManager = ChengyuManager(common_chengyu_list)
+
+
+@dataclass(frozen=True)
+class EmojiWordItem:
+    word: str
+    pinyin: str
+
+
+@dataclass(frozen=True)
+class EmojiItem:
+    emoji: str
+    words: List[EmojiWordItem]
+
+
+def load_emoji_data():
+    data_path = pathlib.Path(__file__).parent.joinpath(DATA_DIR)
+
+    def make_emoji_item(raw_data):
+        words = []
+        for raw_word in raw_data['words']:
+            word_item = EmojiWordItem(
+                word=raw_word['word'],
+                pinyin=raw_word['pinyin'])
+            words.append(word_item)
+        return EmojiItem(
+            emoji=raw_data['emoji'],
+            words=words)
+
+    emoji_list = []
+
+    with io.open(data_path.joinpath(EMOJI_CN_JSON), 'r') as f:
+        for line in f:
+            raw_dict = json.loads(line)
+            emoji_item = make_emoji_item(raw_dict)
+            emoji_list.append(emoji_item)
+
+    return emoji_list
+
+
+class EmojiManager(object):
+
+    def __init__(self, emoji_list: List[EmojiItem]):
+        self.emoji_list = emoji_list
+        self._emoji_map = {}
+        self._word_map = defaultdict(list)
+        self._pinyin_map = defaultdict(list)
+
+        for item in emoji_list:
+            self._emoji_map[item.emoji] = item
+            for word_item in item.words:
+                self._word_map[word_item.word].append(item)
+                self._pinyin_map[word_item.pinyin].append(item)
+                self._pinyin_map[clean_tone(word_item.pinyin)].append(item)
+
+    def get_by_word(self, word):
+        return self._word_map.get(word)
+
+    def get_by_pinyin(self, pinyin):
+        return self._pinyin_map.get(pinyin)
+
+
+DefaultEmojiManager = EmojiManager(load_emoji_data())

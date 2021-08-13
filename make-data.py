@@ -178,5 +178,6 @@ def main():
     elif sys.argv[1] == 'count':
         count_chengyu_use()
 
+
 if __name__ == '__main__':
     main()

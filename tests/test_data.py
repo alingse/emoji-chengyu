@@ -1,28 +1,26 @@
 import unittest
 
 
-from emoji_chengyu.data import DataSource
+from emoji_chengyu.data import DefaultChengyuManager
+from emoji_chengyu.data import CommonChengyuManager
+from emoji_chengyu.data import DefaultEmojiManager
+
+from emoji_chengyu.data import clean_tone
+from emoji_chengyu.data import split_pinyin
 
 
-class TestDataSource(unittest.TestCase):
+class TestData(unittest.TestCase):
 
     def test_load_on_init(self):
-        assert len(DataSource.emoji_map) > 0
+        assert len(DefaultChengyuManager.chengyu_list) > 0
+        assert len(CommonChengyuManager.chengyu_list) > 0
+        assert len(DefaultEmojiManager.emoji_list) > 0
 
     def test_clean_tone(self):
-        assert DataSource.clean_tone('nihao') == 'nihao'
-        assert DataSource.clean_tone('dòu') == 'dou'
-        assert DataSource.clean_tone('zǒu gǒu') == 'zou gou'
+        self.assertEqual(clean_tone('nihao'), 'nihao')
+        self.assertEqual(clean_tone('dòu'), 'dou')
+        self.assertEqual(clean_tone('zǒu gǒu'), 'zou gou')
 
-    def test_split_chengyu_pinyin(self):
+    def test_split_pinyin(self):
         pinyin = "ān bù lí mǎ，jiǎ bù lí shēn"
-        # print(DataSource.split_chengyu_pinyin(pinyin))
-        assert len(DataSource.split_chengyu_pinyin(pinyin)) == 9
-
-    def test_all_split(self):
-        for chengyu_item in DataSource.chengyu_list:
-            pys = DataSource.split_chengyu_pinyin(chengyu_item['pinyin'])
-            words = list(chengyu_item['word'])
-
-            # print(pys, words)
-            assert len(pys) == len(words)
+        assert len(split_pinyin(pinyin)) == 9
