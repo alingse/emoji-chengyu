@@ -4,10 +4,13 @@
 
 ## Usage
 
+```bash
 pip install emoji-chengyu
+```
 
+```bash
 emoji-chengyu-cli
-
+```
 
 ```
 披麻戴孝 🍺🦄🦘🎓
