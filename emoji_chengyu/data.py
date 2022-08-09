@@ -128,11 +128,9 @@ class ChengyuManager(object):
         for item in chengyu_list:
             self._word_map[item.word] = item
 
-    def get_by_word(self, word):
+    def get_by_word(self, word: str) -> ChengyuItem:
         return self._word_map.get(word)
 
-
-# TODO: clean this?
 
 chengyu_list = load_chengyu_data()
 common_chengyu_list = list(filter(lambda item: item.is_common, chengyu_list))
@@ -194,10 +192,10 @@ class EmojiManager(object):
                 self._pinyin_map[word_item.pinyin].append(item)
                 self._pinyin_map[clean_tone(word_item.pinyin)].append(item)
 
-    def get_by_word(self, word):
+    def get_by_word(self, word: str) -> EmojiItem:
         return self._word_map.get(word)
 
-    def get_by_pinyin(self, pinyin):
+    def get_by_pinyin(self, pinyin: str) -> EmojiItem:
         return self._pinyin_map.get(pinyin)
 
 

@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from random import choice, shuffle
-from typing import Tuple
+from typing import Optional, Tuple, List
 
-from .data import clean_tone
+from .data import ChengyuManager, clean_tone
 from .data import DefaultChengyuManager, CommonChengyuManager, DefaultEmojiManager
-from .data import ChengyuItem
+from .data import ChengyuItem, EmojiItem
 
 
 @dataclass(frozen=True)
@@ -13,19 +13,47 @@ class PuzzleItem:
     puzzle: Tuple[str]
     mask: Tuple[bool]
 
+    def clone(self, reduce_mask: int=0) -> 'PuzzleItem':
+        reduce_mask = max(0, reduce_mask)
+        mask_indexes = [i for i in range(len(self.mask)) if self.mask[i]]
 
-def make_one_puzzle(chengyu_item):
+        puzzle = list(self.puzzle)
+        mask = list(self.mask)
+        for i in mask_indexes[:reduce_mask]:
+            mask[i] = False
+            puzzle[i] = self.chengyu_item.word_list[i]
+
+        return PuzzleItem(
+            chengyu_item=self.chengyu_item,
+            puzzle=tuple(puzzle),
+            mask=tuple(mask))
+
+
+def make_one_puzzle(chengyu_item: ChengyuItem) -> Optional[PuzzleItem]:
     puzzle = [None] * len(chengyu_item.word_list)
     mask = [False] * len(chengyu_item.word_list)
 
-    # word_emoji_map = {}
-    def patch_puzzle(i, emoji_items):
+    word_emoji_map = {}
+    emoji_word_map = {}
+    def patch_puzzle(i: int, emoji_items: List[EmojiItem]):
         if not emoji_items or mask[i]:
             return
 
-        # TODO: word-emoji equal
-        # word = chengyu_item.word_list[i]
-        emoji_item = choice(emoji_items)
+        word = chengyu_item.word_list[i]
+        # 如果此文字之前已经有对应了, 则复用 emoji, ex: 冷言冷语
+        if word in word_emoji_map:
+            emoji_item = word_emoji_map[word]
+        else:
+            # 去掉已经被别的汉字使用过的重复 emoji
+            emoji_items = list(filter(lambda x: x.emoji not in emoji_word_map,
+                emoji_items))
+            if not emoji_items:
+                return
+            emoji_item = choice(emoji_items)
+
+        word_emoji_map[word] = emoji_item
+        emoji_word_map[emoji_item.emoji] = word
+
         puzzle[i] = emoji_item.emoji
         mask[i] = True
 
@@ -57,15 +85,8 @@ def make_one_puzzle(chengyu_item):
         mask=mask)
 
 
-def gen_puzzle(only_common=True, search_count=1000):
-    manager = DefaultChengyuManager
-    if only_common:
-        manager = CommonChengyuManager
-
-    chengyu_list = [
-        item
-        for item in manager.chengyu_list[:search_count]
-    ]
+def gen_puzzle(manager: ChengyuManager=CommonChengyuManager, search_count: int=1000):
+    chengyu_list = [item for item in manager.chengyu_list[:search_count]]
     if not chengyu_list:
         raise StopIteration
 
