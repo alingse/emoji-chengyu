@@ -72,6 +72,8 @@ def make_one_puzzle(chengyu_item: ChengyuItem) -> Optional[PuzzleItem]:
         emoji_items = DefaultEmojiManager.get_by_pinyin(clean_tone(pinyin))
         patch_puzzle(i, emoji_items)
 
+    # TODO in/ing en/eng
+
     if not any(mask):
         return None
 

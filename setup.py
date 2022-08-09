@@ -13,8 +13,6 @@ setup(
     include_package_data=True,
     classifiers=[
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
     install_requires=[
