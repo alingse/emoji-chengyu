@@ -103,3 +103,5 @@ emoji 转中文搜了下，有好几个
 
 
 ## TODO
+
+1. make an easy web

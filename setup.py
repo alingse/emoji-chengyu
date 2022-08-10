@@ -8,9 +8,10 @@ with io.open('README.md', encoding='utf-8') as f:
 
 setup(
     name='emoji-chengyu',
-    version='0.0.5',
+    version='0.0.5-a',
     url='https://github.com/alingse/emoji-chengyu',
-    description=readme,
+    long_description_content_type='text/markdown',
+    long_description=readme,
     author='alingse',
     author_email='alingse@foxmail.com',
     license='MIT',
