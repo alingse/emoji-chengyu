@@ -13,6 +13,14 @@ class PuzzleItem:
     puzzle: Tuple[str]
     mask: Tuple[bool]
 
+    @property
+    def puzzle_str(self) -> str :
+        return ''.join(self.puzzle)
+
+    @property
+    def mask_num(self) -> int:
+        return sum(self.mask)
+
     def clone(self, reduce_mask: int = 0) -> 'PuzzleItem':
         reduce_mask = max(0, reduce_mask)
         mask_indexes = [i for i in range(len(self.mask)) if self.mask[i]]

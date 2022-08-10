@@ -3,6 +3,7 @@ import json
 import pathlib
 from collections import defaultdict
 from dataclasses import dataclass
+from turtle import st
 from typing import List, Tuple
 
 
@@ -42,7 +43,7 @@ EMOJI_CN_JSON = 'emoji.cn.json'
 CN_COMMA = '，'
 
 
-def clean_tone(origin):
+def clean_tone(origin: str) -> str:
     rs = None
     for i, c in enumerate(origin):
         if c in TONE_MAP:
@@ -55,7 +56,7 @@ def clean_tone(origin):
     return ''.join(rs)
 
 
-def split_pinyin(origin):
+def split_pinyin(origin: str) -> Tuple[str]:
     rs = []
     last = ''
     for c in origin:
@@ -82,7 +83,7 @@ class ChengyuItem:
     used_count: int
 
     @property
-    def is_common(self):
+    def is_common(self) -> bool:
         return self.used_count > 0
 
 

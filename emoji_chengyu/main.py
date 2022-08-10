@@ -1,9 +1,10 @@
 import itertools
+from typing import List
 
 import click
 
 from emoji_chengyu.data import CommonChengyuManager, DefaultChengyuManager
-from emoji_chengyu.puzzle import gen_puzzle
+from emoji_chengyu.puzzle import PuzzleItem, gen_puzzle
 
 
 @click.command()
@@ -20,20 +21,28 @@ def emoji_chengyu(count, game, all):
     puzzles.sort(key=lambda p: sum(p.mask), reverse=True)
     puzzles = puzzles[:count]
 
-    if not game:
-        for puzzle in puzzles:
-            print(''.join(puzzle.puzzle), puzzle.chengyu_item.word)
-        return
+    if game:
+        run_emoji_chengyu_game(puzzles)
 
-    # interactive game
+    for puzzle in puzzles:
+        print('{} \t {}'.format(puzzle.puzzle_str, puzzle.chengyu_item.word))
+
+
+# interactive game
+def run_emoji_chengyu_game(puzzles: List[PuzzleItem], retry: int = 4):
     for i, puzzle in enumerate(puzzles):
-        print(''.join(puzzle.puzzle))
-        for j in range(3):
+        print('\n-------------')
+        for j in range(retry):
+            print(puzzle.puzzle_str)
             word = input('成语:')
             if word == puzzle.chengyu_item.word:
                 print('正确')
                 break
             else:
-                puzzle.mask
                 print('错误')
+                puzzle = puzzle.clone(1)
+
+            if not puzzle.mask_num:
+                break
         print(puzzle.chengyu_item.word)
+        print('-------------\n')

@@ -15,7 +15,7 @@ class TestChengyu(unittest.TestCase):
         puzzle = make_one_puzzle(chengyu_item)
         assert puzzle is not None
 
-        print(''.join(puzzle.puzzle))
+        print(puzzle.puzzle_str)
 
     def test_make_one_puzzle_with_same(self):
         chengyu_item = DefaultChengyuManager.get_by_word('冷言冷语')
@@ -36,7 +36,9 @@ class TestChengyu(unittest.TestCase):
         chengyu_item = DefaultChengyuManager.get_by_word('冷言冷语')
         puzzle = make_one_puzzle(chengyu_item)
         puzzle2 = puzzle.clone(reduce_mask=4)
-        assert ''.join(puzzle2.puzzle) == chengyu_item.word
+        assert puzzle2.puzzle_str == chengyu_item.word
+        assert puzzle2.mask_num == 0
 
         puzzle3 = puzzle.clone(reduce_mask=1)
         assert puzzle3.puzzle[0] == '冷'
+        assert puzzle3.mask_num == 3
