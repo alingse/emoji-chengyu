@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='emoji-chengyu',
-    version='0.0.5-a',
+    version='0.0.5',
     url='https://github.com/alingse/emoji-chengyu',
     description='',
     author='alingse',
