@@ -6,6 +6,7 @@
 
 ## Usage
 
+### Cli
 ```bash
 pip install emoji-chengyu
 ```
@@ -31,6 +32,14 @@ emoji-chengyu-cli --game
 指手点脚 💅🤚👩‍💻🦶
 ```
 
+### Libary
+
+```
+from emoji_chengyu.puzzle import gen_puzzle
+
+for p in gen_puzzle():
+    print(p.puzzle_str, p.chengyu_item.word)
+```
 
 ## 起因
 
