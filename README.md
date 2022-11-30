@@ -8,7 +8,7 @@
 
 ### Cli
 ```bash
-pip install emoji-chengyu
+pip3 install emoji-chengyu
 ```
 
 ```bash
