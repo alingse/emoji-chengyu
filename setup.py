@@ -8,7 +8,7 @@ with io.open('README.md', encoding='utf-8') as f:
 
 setup(
     name='emoji-chengyu',
-    version='0.0.5',
+    version='0.0.6',
     url='https://github.com/alingse/emoji-chengyu',
     long_description_content_type='text/markdown',
     long_description=readme,
@@ -19,7 +19,7 @@ setup(
     include_package_data=True,
     classifiers=[
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3',
     ],
     install_requires=[
         'click',
