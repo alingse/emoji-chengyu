@@ -86,7 +86,7 @@ class ChengyuItem:
         return self.used_count > 0
 
     @property
-    def word_length(self) -> bool:
+    def word_length(self) -> int:
         return len(self.word_list)
 
 

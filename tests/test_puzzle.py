@@ -1,5 +1,5 @@
+import itertools
 import unittest
-
 
 from emoji_chengyu.data import DefaultChengyuManager
 from emoji_chengyu.puzzle import make_one_puzzle
@@ -32,6 +32,11 @@ class TestChengyu(unittest.TestCase):
         puzzle = next(pg)
         assert puzzle is not None
 
+    def test_gen_puzzle_empty(self):
+        pg = gen_puzzle(manager=DefaultChengyuManager, search_count=0)
+        puzzles = list(pg)
+        assert len(puzzles) == 0
+
     def test_make_and_clone(self):
         chengyu_item = DefaultChengyuManager.get_by_word('冷言冷语')
         puzzle = make_one_puzzle(chengyu_item)
@@ -42,3 +47,8 @@ class TestChengyu(unittest.TestCase):
         puzzle3 = puzzle.clone(reduce_mask=1)
         assert puzzle3.puzzle[0] == '冷'
         assert puzzle3.mask_num == 3
+
+    def test_make_puzzle_none(self):
+        chengyu_item = DefaultChengyuManager.get_by_word('安邦定国')
+        puzzle = make_one_puzzle(chengyu_item)
+        assert puzzle is None

@@ -97,11 +97,7 @@ def make_one_puzzle(chengyu_item: ChengyuItem) -> Optional[PuzzleItem]:
 
 def gen_puzzle(manager: ChengyuManager = CommonChengyuManager, search_count: int = 1000):
     chengyu_list = [item for item in manager.chengyu_list[:search_count]]
-    if not chengyu_list:
-        raise StopIteration
-
     shuffle(chengyu_list)
-
     for item in chengyu_list:
         puzzle = make_one_puzzle(item)
         if puzzle:
