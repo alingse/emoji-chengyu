@@ -25,24 +25,25 @@ def emoji_chengyu(count, game, all):
         run_emoji_chengyu_game(puzzles)
 
     for puzzle in puzzles:
-        print('{} \t {}'.format(puzzle.puzzle_str, puzzle.chengyu_item.word))
+        click.echo('{}\t{}'.format(puzzle.puzzle_str, puzzle.chengyu_item.word))
 
 
 # interactive game
 def run_emoji_chengyu_game(puzzles: List[PuzzleItem], retry: int = 4):
     for i, puzzle in enumerate(puzzles):
-        print('\n-------------')
+        click.echo('\n-------------')
         for j in range(retry):
-            print(puzzle.puzzle_str)
+            click.echo(puzzle.puzzle_str)
             word = input('成语:')
             if word == puzzle.chengyu_item.word:
-                print('正确')
+                click.echo('正确')
                 break
             else:
-                print('错误')
+                click.echo('错误')
                 puzzle = puzzle.clone(1)
 
             if not puzzle.mask_num:
                 break
-        print(puzzle.chengyu_item.word)
-        print('-------------\n')
+
+        click.echo(puzzle.chengyu_item.word)
+        click.echo('-------------\n')

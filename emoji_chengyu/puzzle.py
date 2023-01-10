@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from random import choice, shuffle
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple, List, Mapping
 
 from .data import ChengyuManager, clean_tone
 from .data import CommonChengyuManager, DefaultEmojiManager
@@ -41,8 +41,8 @@ def make_one_puzzle(chengyu_item: ChengyuItem) -> Optional[PuzzleItem]:
     puzzle = [None] * len(chengyu_item.word_list)
     mask = [False] * len(chengyu_item.word_list)
 
-    word_emoji_map = {}
-    emoji_word_map = {}
+    word_emoji_map : Mapping[str, EmojiItem] = {}
+    emoji_word_map : Mapping[str, str] = {}
 
     def patch_puzzle(i: int, emoji_items: List[EmojiItem]):
         if not emoji_items or mask[i]:
