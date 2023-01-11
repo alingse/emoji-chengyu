@@ -24,3 +24,7 @@ class TestData(unittest.TestCase):
     def test_split_pinyin(self):
         pinyin = "ān bù lí mǎ，jiǎ bù lí shēn"
         assert len(split_pinyin(pinyin)) == 9
+
+    def test_chengyu_item(self):
+        chengyu_item = DefaultChengyuManager.get_by_word('逐鹿中原')
+        assert chengyu_item.word_length == 4
