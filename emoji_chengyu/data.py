@@ -1,10 +1,8 @@
-import io
 import json
 import pathlib
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import List, Tuple, Mapping, Optional
-
+from typing import List, Mapping, Optional, Tuple
 
 TONE_MAP = {
     "ā": "a",
@@ -93,7 +91,7 @@ class ChengyuItem:
 def load_chengyu_data() -> List[ChengyuItem]:
     data_path = pathlib.Path(__file__).parent.joinpath(DATA_DIR)
 
-    with io.open(data_path.joinpath(CHENGYU_COUNT_JSON), 'r') as f:
+    with open(data_path.joinpath(CHENGYU_COUNT_JSON)) as f:
         chengyu_count_map = json.load(f)
 
     def make_chengyu_item(raw_data):
@@ -114,7 +112,7 @@ def load_chengyu_data() -> List[ChengyuItem]:
             used_count=used_count)
 
     chengyu_list: List[ChengyuItem] = []
-    with io.open(data_path.joinpath(CHENGYU_JSON), 'r') as f:
+    with open(data_path.joinpath(CHENGYU_JSON)) as f:
         for line in f:
             raw_dict = json.loads(line)
             item = make_chengyu_item(raw_dict)
@@ -124,7 +122,7 @@ def load_chengyu_data() -> List[ChengyuItem]:
     return chengyu_list
 
 
-class ChengyuManager(object):
+class ChengyuManager:
 
     def __init__(self, chengyu_list: List[ChengyuItem]):
         self.chengyu_list = chengyu_list
@@ -172,7 +170,7 @@ def load_emoji_data() -> List[EmojiItem]:
 
     emoji_list : List[EmojiItem] = []
 
-    with io.open(data_path.joinpath(EMOJI_CN_JSON), 'r') as f:
+    with open(data_path.joinpath(EMOJI_CN_JSON)) as f:
         for line in f:
             raw_dict = json.loads(line)
             emoji_item = make_emoji_item(raw_dict)
@@ -181,7 +179,7 @@ def load_emoji_data() -> List[EmojiItem]:
     return emoji_list
 
 
-class EmojiManager(object):
+class EmojiManager:
 
     def __init__(self, emoji_list: List[EmojiItem]):
         self.emoji_list : List[EmojiItem] = emoji_list

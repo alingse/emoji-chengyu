@@ -1,12 +1,12 @@
 import unittest
 
-
-from emoji_chengyu.data import DefaultChengyuManager
-from emoji_chengyu.data import CommonChengyuManager
-from emoji_chengyu.data import DefaultEmojiManager
-
-from emoji_chengyu.data import clean_tone
-from emoji_chengyu.data import split_pinyin
+from emoji_chengyu.data import (
+    CommonChengyuManager,
+    DefaultChengyuManager,
+    DefaultEmojiManager,
+    clean_tone,
+    split_pinyin,
+)
 
 
 class TestData(unittest.TestCase):

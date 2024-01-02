@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "emoji-chengyu"
+dynamic = ["version"]
+readme = "README.md"
+description = "把成语转成 emoji 来猜谜的小玩具, 可以用于中秋, 元宵猜灯谜"
+license = "MIT"
+authors = [
+    { name = "alingse", email = "alingse@foxmail.com" },
+]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "click",
+]
+keywords = [
+    "emoji",
+    "chengyu",
+    "emoji-chengyu",
+    "成语"
+]
+
+[project.scripts]
+emoji-chengyu-cli = "emoji_chengyu.main:emoji_chengyu"
+
+[project.urls]
+Homepage = "https://github.com/alingse/emoji-chengyu"
+
+[tool.hatch.version]
+path = "emoji_chengyu/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/emoji_chengyu",
+]
+
+[tool.hatch.envs.test]
+dependencies = [
+  "pytest"
+]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.10"]

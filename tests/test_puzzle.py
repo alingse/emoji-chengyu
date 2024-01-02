@@ -1,9 +1,7 @@
-import itertools
 import unittest
 
 from emoji_chengyu.data import DefaultChengyuManager
-from emoji_chengyu.puzzle import make_one_puzzle
-from emoji_chengyu.puzzle import gen_puzzle
+from emoji_chengyu.puzzle import gen_puzzle, make_one_puzzle
 
 
 class TestChengyu(unittest.TestCase):
