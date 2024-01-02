@@ -25,7 +25,7 @@ def emoji_chengyu(count, game, all):
         run_emoji_chengyu_game(puzzles)
 
     for puzzle in puzzles:
-        click.echo('{}\t{}'.format(puzzle.puzzle_str, puzzle.chengyu_item.word))
+        click.echo(f'{puzzle.puzzle_str}\t{puzzle.chengyu_item.word}')
 
 
 # interactive game

@@ -1,10 +1,8 @@
 from dataclasses import dataclass
 from random import choice, shuffle
-from typing import Optional, Tuple, List, Mapping
+from typing import List, Mapping, Optional, Tuple
 
-from .data import ChengyuManager, clean_tone
-from .data import CommonChengyuManager, DefaultEmojiManager
-from .data import ChengyuItem, EmojiItem
+from .data import ChengyuItem, ChengyuManager, CommonChengyuManager, DefaultEmojiManager, EmojiItem, clean_tone
 
 
 @dataclass(frozen=True)

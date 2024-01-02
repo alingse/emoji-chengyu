@@ -1,4 +1,3 @@
-import io
 import json
 import os
 import sys
@@ -15,12 +14,12 @@ temp_chengyu_use_filepath = 'temp.chengyu.use.txt'
 
 
 def make_idiom():
-    with io.open(temp_idiom_filepath, 'r') as f:
+    with open(temp_idiom_filepath) as f:
         raw_content = f.read()
 
     idioms = json.loads(raw_content)
 
-    with io.open(chengyu_filepath, 'w') as f:
+    with open(chengyu_filepath, 'w') as f:
         for x in idioms:
             idiom = {}
             idiom['word'] = x['word']
@@ -30,7 +29,7 @@ def make_idiom():
 
 
 def load_word_map():
-    with io.open(temp_word_filepath, 'r') as f:
+    with open(temp_word_filepath) as f:
         words = json.load(f)
 
     word_map = defaultdict(list)
@@ -40,7 +39,7 @@ def load_word_map():
 
 
 def load_emoji_map():
-    with io.open(temp_emoji_filepath, 'r') as f:
+    with open(temp_emoji_filepath) as f:
         emojis = json.load(f)
 
     emoji_map = {}
@@ -89,7 +88,7 @@ def mark_emoji():
     marks = []
 
     if os.path.exists(marked_emoji_filepath):
-        with io.open(marked_emoji_filepath, 'r') as f:
+        with open(marked_emoji_filepath) as f:
             for line in f:
                 mark = json.loads(line)
                 marks.append(mark)
@@ -119,7 +118,7 @@ def mark_emoji():
         marks.append(mark)
         marked_emoji_map[emoji] = True
 
-    with io.open(marked_emoji_filepath, 'w') as f:
+    with open(marked_emoji_filepath, 'w') as f:
         for mark in marks:
             f.write(json.dumps(mark, ensure_ascii=False))
             f.write('\n')
@@ -131,15 +130,15 @@ def edit_emoji():
 
 def count_chengyu_use():
     try:
-        with io.open(chengyu_count_filepath, 'r') as f:
+        with open(chengyu_count_filepath) as f:
             word_count_map = json.load(f)
     except Exception:
         word_count_map = {}
 
-    with io.open(temp_chengyu_use_filepath, 'r') as f:
+    with open(temp_chengyu_use_filepath) as f:
         temp_chengyu_use_txt = f.read()
 
-    with io.open(chengyu_filepath, 'r') as f:
+    with open(chengyu_filepath) as f:
         for line in f:
             item = json.loads(line)
             word = item['word']
@@ -148,7 +147,7 @@ def count_chengyu_use():
             if count > 0:
                 word_count_map[word] = count
 
-    with io.open(chengyu_count_filepath, 'w') as f:
+    with open(chengyu_count_filepath, 'w') as f:
         json.dump(word_count_map, f, indent=4, ensure_ascii=False)
 
 
